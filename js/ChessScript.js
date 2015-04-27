@@ -51,6 +51,23 @@ objLoader.load("/assets/models/" + pieceInfo[2].name + ".obj", function(object) 
     });
 });
 
+objLoader.load("/assets/models/" + pieceInfo[1].name + ".obj", function(object) {
+    object.traverse( function ( child ) {
+
+        if (child instanceof THREE.Mesh) {
+            rook = child;
+            child.material = new THREE.MeshLambertMaterial({color: 0x555555});
+            child.position.set(.25,-.75,.2);
+            child.scale.set(.025, .025, .025);
+            child.rotation.z = -.1;
+            child.rotation.x = 1.6;
+            child.rotation.y = 1.7;
+            scene.add(child);
+            animateKnight(rook);
+        }
+    });
+});
+
 var boardTexture = new THREE.ImageUtils.loadTexture("/assets/textures/board-pattern.png");
 boardTexture.repeat.set(4,4);
 boardTexture.wrapS = THREE.RepeatWrapping;
@@ -170,6 +187,15 @@ function animateKnight(knight) {
     var tweenUp = TweenUp(knight);
     var tweenOneUp = TweenSpacesDiagonal(knight, 3, 3);
     var tweenDown = TweenDown(knight);
+    tweenUp.chain(tweenOneUp);
+    tweenOneUp.chain(tweenDown);
+    tweenUp.start();
+}
+
+function animateRook(rook) {
+    var tweenUp = TweenUp(rook);
+    var tweenOneUp = TweenSpacesDiagonal(rook, 3, 3);
+    var tweenDown = TweenDown(rook);
     tweenUp.chain(tweenOneUp);
     tweenOneUp.chain(tweenDown);
     tweenUp.start();
